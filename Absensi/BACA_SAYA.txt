@@ -1,0 +1,32 @@
+===========================================================
+        SISTEM ABSENSI & MONITORING (SI-AMON)
+===========================================================
+
+Instalasi & Konfigurasi berhasil disiapkan!
+
+-----------------------------------------------------------
+CARA MENJALANKAN APLIKASI
+-----------------------------------------------------------
+1. Buka File Explorer di folder ini:
+   e:\coding\Sistem_Absensi\Absensi
+
+2. Cari file bernama "run_app.bat" dan klik 2x.
+
+3. Jangan tutup jendela hitam (terminal) yang muncul.
+
+-----------------------------------------------------------
+AKUN LOGIN
+-----------------------------------------------------------
+
+1. PORTAL BKAP (ADMIN ACADEMIC)
+   - URL      : http://localhost:8000/admin
+   - Email    : admin@bkap.com
+   - Password : password
+
+2. PORTAL PEMBIMBING (MENTOR)
+   - URL      : http://localhost:8000/mentor
+   - Email    : ahmad@mentor.com
+   - Password : password
+
+Enjoy!
+Antigravity Agent

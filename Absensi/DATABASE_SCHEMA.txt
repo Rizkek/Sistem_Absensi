@@ -1,0 +1,493 @@
+=============================================================
+  DATABASE SCHEMA & ENTITY RELATIONSHIP DIAGRAM (ERD)
+  Sistem Absensi & Monitoring Santri
+=============================================================
+
+## OVERVIEW DATABASE
+
+Database Type: PostgreSQL (production) / SQLite (local)
+Total Tables: 7 (5 core + 2 Laravel default)
+
+Core Tables:
+1. users           - Data pengguna (Admin & Mentor)
+2. groups          - Kelompok/Halaqah belajar
+3. students        - Data santri/siswa
+4. sessions        - Jadwal/sesi pertemuan
+5. attendances     - Record kehadiran santri
+
+Laravel Tables:
+6. sessions        - Session web (Laravel)
+7. cache           - Laravel cache storage
+
+=============================================================
+## ENTITY RELATIONSHIP DIAGRAM (ERD)
+=============================================================
+
+┌─────────────────┐
+│     USERS       │
+├─────────────────┤
+│ id (PK)         │◄──┐
+│ name            │   │
+│ email (unique)  │   │
+│ password        │   │
+│ role            │   │ 1 User = N Groups
+│   - admin       │   │ (Satu mentor memimpin banyak grup)
+│   - mentor      │   │
+│ created_at      │   │
+│ updated_at      │   │
+└─────────────────┘   │
+                      │
+                      │
+┌─────────────────┐   │
+│     GROUPS      │   │
+├─────────────────┤   │
+│ id (PK)         │   │
+│ name            │   │
+│ mentor_id (FK)  │───┘
+│ created_at      │
+│ updated_at      │
+└────────┬────────┘
+         │
+         │ 1 Group = N Students
+         │ (Satu grup berisi banyak santri)
+         │
+         ▼
+┌─────────────────┐
+│    STUDENTS     │
+├─────────────────┤
+│ id (PK)         │◄──┐
+│ name            │   │
+│ nis (unique)    │   │
+│ group_id (FK)   │───┘
+│ created_at      │
+│ updated_at      │
+└─────────────────┘
+         │
+         │
+┌────────┴────────┐
+│                 │
+│ 1 Group = N Sessions
+│ (Satu grup punya banyak pertemuan)
+│                 │
+│                 ▼
+│        ┌─────────────────┐
+│        │    SESSIONS     │
+│        ├─────────────────┤
+│        │ id (PK)         │
+└───────►│ group_id (FK)   │
+         │ date            │
+         │ start_time      │
+         │ topic           │
+         │ status          │
+         │   - scheduled   │
+         │   - completed   │
+         │   - cancelled   │
+         │ created_at      │
+         │ updated_at      │
+         └────────┬────────┘
+                  │
+                  │ 1 Session = N Attendances
+                  │ (Satu sesi punya banyak record kehadiran)
+                  │
+                  ▼
+         ┌─────────────────┐
+         │  ATTENDANCES    │
+         ├─────────────────┤
+         │ id (PK)         │
+    ┌───►│ session_id (FK) │
+    │    │ student_id (FK) │◄───┐
+    │    │ status          │    │
+    │    │   - present     │    │
+    │    │   - absent      │    │
+    │    │   - late        │    │
+    │    │   - permit      │    │
+    │    │ notes           │    │
+    │    │ created_at      │    │
+    │    │ updated_at      │    │
+    │    └─────────────────┘    │
+    │                           │
+    └───────────────────────────┘
+        1 Student = N Attendances
+        (Satu santri punya banyak record kehadiran)
+
+=============================================================
+## DETAIL SETIAP TABEL
+=============================================================
+
+-----------------------------------------------------------
+TABLE: users
+-----------------------------------------------------------
+Deskripsi: Menyimpan data pengguna sistem (Admin & Mentor)
+
+Columns:
+- id (BIGINT, PK, AUTO_INCREMENT)
+  Primary key, unique identifier
+
+- name (VARCHAR 255)
+  Nama lengkap user
+
+- email (VARCHAR 255, UNIQUE)
+  Email untuk login (harus unique)
+
+- password (VARCHAR 255)
+  Password ter-hash (bcrypt)
+
+- role (VARCHAR 255, DEFAULT 'mentor')
+  Role user:
+  - 'admin' : Admin BKAP (akses penuh)
+  - 'mentor': Pembimbing/Ustadz (akses terbatas)
+
+- email_verified_at (TIMESTAMP, NULLABLE)
+  Waktu verifikasi email
+
+- remember_token (VARCHAR 100, NULLABLE)
+  Token untuk "Remember Me"
+
+- created_at (TIMESTAMP)
+  Waktu pembuatan record
+
+- updated_at (TIMESTAMP)
+  Waktu update terakhir
+
+Indexes:
+- PRIMARY KEY (id)
+- UNIQUE (email)
+
+Relasi:
+- HAS MANY: groups (1 user bisa punya banyak grup jika mentor)
+
+-----------------------------------------------------------
+TABLE: groups
+-----------------------------------------------------------
+Deskripsi: Kelompok/Halaqah belajar, dipimpin oleh 1 mentor
+
+Columns:
+- id (BIGINT, PK, AUTO_INCREMENT)
+  Primary key
+
+- name (VARCHAR 255)
+  Nama kelompok (contoh: UPA-A1, UPA-A2)
+
+- mentor_id (BIGINT, FK → users.id)
+  ID mentor yang memimpin grup ini
+
+- created_at (TIMESTAMP)
+  Waktu pembuatan record
+
+- updated_at (TIMESTAMP)
+  Waktu update terakhir
+
+Indexes:
+- PRIMARY KEY (id)
+- FOREIGN KEY (mentor_id) REFERENCES users(id) ON DELETE CASCADE
+
+Relasi:
+- BELONGS TO: 1 user (mentor)
+- HAS MANY: students (banyak santri dalam 1 grup)
+- HAS MANY: sessions (banyak pertemuan dalam 1 grup)
+
+-----------------------------------------------------------
+TABLE: students
+-----------------------------------------------------------
+Deskripsi: Data santri/siswa yang mengikuti pembelajaran
+
+Columns:
+- id (BIGINT, PK, AUTO_INCREMENT)
+  Primary key
+
+- name (VARCHAR 255)
+  Nama lengkap santri
+
+- nis (VARCHAR 255, NULLABLE, UNIQUE)
+  Nomor Induk Santri (boleh kosong, harus unique jika diisi)
+
+- group_id (BIGINT, NULLABLE, FK → groups.id)
+  ID grup tempat santri tergabung (nullable = belum di-assign)
+
+- created_at (TIMESTAMP)
+  Waktu pembuatan record
+
+- updated_at (TIMESTAMP)
+  Waktu update terakhir
+
+Indexes:
+- PRIMARY KEY (id)
+- UNIQUE (nis)
+- FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE SET NULL
+
+Relasi:
+- BELONGS TO: 1 group (nullable)
+- HAS MANY: attendances (banyak record kehadiran)
+
+-----------------------------------------------------------
+TABLE: sessions
+-----------------------------------------------------------
+Deskripsi: Jadwal pertemuan/sesi pembelajaran per grup
+
+Columns:
+- id (BIGINT, PK, AUTO_INCREMENT)
+  Primary key
+
+- group_id (BIGINT, FK → groups.id)
+  ID grup yang mengadakan sesi ini
+
+- date (DATE)
+  Tanggal pelaksanaan sesi
+
+- start_time (TIME, NULLABLE)
+  Waktu mulai sesi (contoh: 08:00:00)
+
+- topic (VARCHAR 255, NULLABLE)
+  Materi/topik yang diajarkan
+
+- status (ENUM, DEFAULT 'scheduled')
+  Status sesi:
+  - 'scheduled' : Terjadwal (belum dilaksanakan)
+  - 'completed' : Sudah selesai
+  - 'cancelled' : Dibatalkan
+
+- created_at (TIMESTAMP)
+  Waktu pembuatan record
+
+- updated_at (TIMESTAMP)
+  Waktu update terakhir
+
+Indexes:
+- PRIMARY KEY (id)
+- FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
+- INDEX (date) untuk query cepat berdasarkan tanggal
+
+Relasi:
+- BELONGS TO: 1 group
+- HAS MANY: attendances (banyak record kehadiran santri)
+
+-----------------------------------------------------------
+TABLE: attendances
+-----------------------------------------------------------
+Deskripsi: Record kehadiran santri per sesi pertemuan
+
+Columns:
+- id (BIGINT, PK, AUTO_INCREMENT)
+  Primary key
+
+- session_id (BIGINT, FK → sessions.id)
+  ID sesi pertemuan
+
+- student_id (BIGINT, FK → students.id)
+  ID santri
+
+- status (ENUM, DEFAULT 'absent')
+  Status kehadiran:
+  - 'present': Hadir
+  - 'absent' : Tidak hadir / Alpha
+  - 'late'   : Terlambat
+  - 'permit' : Izin (sakit/urusan keluarga)
+
+- notes (VARCHAR 255, NULLABLE)
+  Catatan tambahan (contoh: "Sakit demam", "Izin pulang kampung")
+
+- created_at (TIMESTAMP)
+  Waktu pembuatan record
+
+- updated_at (TIMESTAMP)
+  Waktu update terakhir
+
+Indexes:
+- PRIMARY KEY (id)
+- FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
+- FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+- UNIQUE (session_id, student_id) untuk prevent duplikasi
+
+Relasi:
+- BELONGS TO: 1 session
+- BELONGS TO: 1 student
+
+=============================================================
+## ALUR DATA (FLOW)
+=============================================================
+
+### A. ALUR SETUP AWAL (OLEH ADMIN BKAP)
+
+1. [Admin Login] → users (role: admin)
+   └─ Akses: /admin
+
+2. [Buat Data Santri]
+   └─ Admin input data santri baru
+   └─ Simpan ke: students (group_id = NULL)
+
+3. [Buat Kelompok]
+   └─ Admin buat grup baru
+   └─ Assign mentor ke grup
+   └─ Simpan ke: groups (mentor_id = [user_id])
+
+4. [Assign Santri ke Kelompok]
+   └─ Admin edit data santri
+   └─ Set group_id
+   └─ Update: students.group_id
+
+-----------------------------------------------------------
+
+### B. ALUR INPUT KEHADIRAN (OLEH MENTOR)
+
+1. [Mentor Login] → users (role: mentor)
+   └─ Akses: /mentor
+
+2. [Lihat Dashboard]
+   └─ Query: SELECT * FROM groups WHERE mentor_id = [current_user_id]
+   └─ Tampilkan daftar santri di grup tersebut
+
+3. [Buat Sesi Pertemuan Baru]
+   └─ Mentor pilih tanggal & materi
+   └─ INSERT INTO sessions:
+       - group_id = [mentor's_group_id]
+       - date = [tanggal_dipilih]
+       - topic = [materi]
+       - status = 'scheduled'
+
+4. [Auto-Generate Daftar Kehadiran]
+   └─ Sistem otomatis buat record untuk semua santri:
+   └─ Trigger: afterCreate() di SessionResource
+   └─ Logic:
+       FOR EACH student IN group:
+         INSERT INTO attendances:
+           - session_id = [new_session_id]
+           - student_id = [student_id]
+           - status = 'absent' (default)
+
+5. [Input/Update Status Kehadiran]
+   └─ Mentor buka sesi yang sudah dibuat
+   └─ Edit status per santri via tabel inline
+   └─ UPDATE attendances SET status = 'present' WHERE id = X
+
+6. [Tandai Sesi Selesai]
+   └─ UPDATE sessions SET status = 'completed'
+
+-----------------------------------------------------------
+
+### C. ALUR QUERY LAPORAN (STATISTIK)
+
+1. [Total Kehadiran Per Santri]
+   Query:
+   SELECT 
+     students.name,
+     COUNT(CASE WHEN attendances.status = 'present' THEN 1 END) as hadir,
+     COUNT(CASE WHEN attendances.status = 'absent' THEN 1 END) as alpha,
+     COUNT(*) as total_sesi
+   FROM students
+   LEFT JOIN attendances ON students.id = attendances.student_id
+   GROUP BY students.id
+
+2. [Persentase Kehadiran Per Grup]
+   Query:
+   SELECT 
+     groups.name,
+     (COUNT(CASE WHEN attendances.status = 'present' THEN 1 END) * 100.0 / 
+      COUNT(*)) as persentase_hadir
+   FROM groups
+   JOIN sessions ON groups.id = sessions.group_id
+   JOIN attendances ON sessions.id = attendances.session_id
+   GROUP BY groups.id
+
+3. [Santri Tidak Hadir Hari Ini]
+   Query:
+   SELECT students.name, groups.name as grup
+   FROM attendances
+   JOIN students ON attendances.student_id = students.id
+   JOIN sessions ON attendances.session_id = sessions.id
+   JOIN groups ON students.group_id = groups.id
+   WHERE sessions.date = CURRENT_DATE
+   AND attendances.status = 'absent'
+
+-----------------------------------------------------------
+
+### D. ALUR DELETE CASCADE
+
+Jika Mentor dihapus:
+  users (mentor) → CASCADE DELETE → groups
+    └─ groups → SET NULL → students.group_id
+    └─ groups → CASCADE DELETE → sessions
+         └─ sessions → CASCADE DELETE → attendances
+
+Artinya:
+- Santri tidak terhapus, tapi jadi "tanpa grup"
+- Semua sesi & kehadiran di grup tersebut ikut terhapus
+
+Jika Santri dihapus:
+  students → CASCADE DELETE → attendances
+  
+Artinya:
+- Semua record kehadiran santri tersebut terhapus
+
+=============================================================
+## CONTOH DATA (SAMPLE)
+=============================================================
+
+# users
++----+----------------+---------------------+----------+
+| id | name           | email               | role     |
++----+----------------+---------------------+----------+
+| 1  | Admin BKAP     | admin@bkap.com      | admin    |
+| 2  | Ustadz Ahmad   | ahmad@mentor.com    | mentor   |
+| 3  | Ustadz Budi    | budi@mentor.com     | mentor   |
++----+----------------+---------------------+----------+
+
+# groups
++----+---------+------------+
+| id | name    | mentor_id  |
++----+---------+------------+
+| 1  | UPA-A1  | 2          |  ← dipimpin Ustadz Ahmad
+| 2  | UPA-A2  | 3          |  ← dipimpin Ustadz Budi
++----+---------+------------+
+
+# students
++----+---------------+------+----------+
+| id | name          | nis  | group_id |
++----+---------------+------+----------+
+| 1  | Ali bin Ahmad | 001  | 1        |  ← di grup UPA-A1
+| 2  | Fatimah       | 002  | 1        |  ← di grup UPA-A1
+| 3  | Umar          | 003  | 2        |  ← di grup UPA-A2
++----+---------------+------+----------+
+
+# sessions
++----+----------+------------+------------+------------------+-----------+
+| id | group_id | date       | start_time | topic            | status    |
++----+----------+------------+------------+------------------+-----------+
+| 1  | 1        | 2026-01-19 | 08:00:00   | Shalat Berjamaah | completed |
+| 2  | 1        | 2026-01-20 | 08:00:00   | Shalat Dhuha     | scheduled |
++----+----------+------------+------------+------------------+-----------+
+
+# attendances
++----+------------+------------+---------+-------+
+| id | session_id | student_id | status  | notes |
++----+------------+------------+---------+-------+
+| 1  | 1          | 1          | present | -     |  ← Ali hadir
+| 2  | 1          | 2          | absent  | Sakit |  ← Fatimah tidak hadir
+| 3  | 2          | 1          | absent  | -     |  ← Belum diisi (default)
+| 4  | 2          | 2          | absent  | -     |  ← Belum diisi (default)
++----+------------+------------+---------+-------+
+
+=============================================================
+## BEST PRACTICES
+=============================================================
+
+1. INDEXING
+   - Selalu index foreign keys untuk performance
+   - Index kolom yang sering di-query (date, status)
+
+2. VALIDATION
+   - Email harus unique (prevent duplikasi akun)
+   - NIS boleh null tapi harus unique jika diisi
+   - Prevent duplikasi: (session_id + student_id) harus unique
+
+3. CASCADE RULES
+   - ON DELETE CASCADE: Jika parent dihapus, child ikut terhapus
+   - ON DELETE SET NULL: Jika parent dihapus, child jadi NULL
+
+4. SOFT DELETE (Optional untuk production)
+   - Tambahkan kolom deleted_at
+   - Jangan benar-benar hapus data, tapi mark as deleted
+   - Bisa restore later
+
+=============================================================
+END OF DATABASE DOCUMENTATION
+=============================================================

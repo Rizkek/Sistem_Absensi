@@ -1,0 +1,177 @@
+┌──────────────────────────────────────────────────────────────────┐
+│          SISTEM ABSENSI - DATABASE FLOW DIAGRAM                  │
+│                   (Quick Reference)                              │
+└──────────────────────────────────────────────────────────────────┘
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  FASE 1: SETUP AWAL (Admin BKAP)                                  ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+    [Admin Login]
+         │
+         ├─► (1) Buat Data Santri
+         │      ┌──────────────┐
+         │      │   STUDENTS   │  ← Simpan nama, NIS
+         │      └──────────────┘     (group_id = NULL dulu)
+         │
+         ├─► (2) Buat Kelompok/Halaqah
+         │      ┌──────────────┐
+         │      │    GROUPS    │  ← Simpan nama grup
+         │      └──────────────┘     + pilih mentor
+         │             │
+         │             │ FK: mentor_id
+         │             ▼
+         │      ┌──────────────┐
+         │      │    USERS     │  ← Data mentor
+         │      └──────────────┘
+         │
+         └─► (3) Assign Santri ke Grup
+                ┌──────────────┐
+                │   STUDENTS   │  ← Update group_id
+                └──────────────┘
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  FASE 2: INPUT KEHADIRAN (Mentor)                                 ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+    [Mentor Login]
+         │
+         ├─► (1) Buat Sesi Pertemuan
+         │      ┌──────────────┐
+         │      │   SESSIONS   │  ← Simpan: tanggal, materi
+         │      └──────┬───────┘     status = 'scheduled'
+         │             │
+         │             │ AUTO-TRIGGER
+         │             ▼
+         ├─► (2) Generate Daftar Hadir
+         │      ┌──────────────┐
+         │      │ ATTENDANCES  │  ← Auto-create untuk semua
+         │      └──────────────┘     santri di grup (status=absent)
+         │             │
+         │             │ Relasi:
+         │             ├─ session_id → SESSIONS
+         │             └─ student_id → STUDENTS
+         │
+         └─► (3) Input Status Kehadiran
+                ┌──────────────┐
+                │ ATTENDANCES  │  ← Update status:
+                └──────────────┘     present/absent/late/permit
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  FASE 3: LAPORAN & STATISTIK                                      ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+    Dashboard Admin/Mentor
+         │
+         ├─► Query 1: Total Kehadiran Per Santri
+         │      SELECT FROM attendances 
+         │      JOIN students
+         │      COUNT status = 'present'
+         │
+         ├─► Query 2: Persentase Kehadiran Per Grup
+         │      SELECT FROM groups
+         │      JOIN sessions → attendances
+         │      AVG(present) / total
+         │
+         └─► Query 3: Daftar Tidak Hadir Hari Ini
+                SELECT FROM attendances
+                WHERE date = TODAY
+                AND status = 'absent'
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  RELASI ANTAR TABEL (Simplified)                                  ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+    USERS (Mentor)
+       │
+       │ 1 : N (One-to-Many)
+       ▼
+    GROUPS (Halaqah)
+       │
+       ├─► 1 : N ──► STUDENTS (Santri)
+       │                │
+       │                │ 1 : N
+       │                ▼
+       └─► 1 : N ──► SESSIONS (Pertemuan)
+                        │
+                        │ 1 : N
+                        ▼
+                    ATTENDANCES (Kehadiran)
+                        │
+                        │ N : 1
+                        └─────► STUDENTS
+
+    Artinya:
+    - 1 Mentor → Banyak Grup
+    - 1 Grup → Banyak Santri
+    - 1 Grup → Banyak Sesi
+    - 1 Sesi → Banyak Record Kehadiran
+    - 1 Santri → Banyak Record Kehadiran
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  CONTOH SKENARIO NYATA                                            ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+Scenario: Ustadz Ahmad mengajar UPA-A1
+
+1. Setup (Admin):
+   - Buat user: Ustadz Ahmad (mentor)
+   - Buat grup: UPA-A1 (mentor_id = Ahmad)
+   - Tambah 10 santri ke UPA-A1
+
+2. Hari Senin, 19 Jan 2026:
+   - Ustadz Ahmad login ke /mentor
+   - Klik "Buat Sesi"
+   - Isi: Tanggal = 19/01/2026, Materi = "Shalat Berjamaah"
+   - Save → Sistem auto-buat 10 record di ATTENDANCES (default: absent)
+
+3. Setelah sesi selesai:
+   - Ustadz Ahmad buka sesi tersebut
+   - Centang status santri:
+     * Ali → Hadir
+     * Fatimah → Sakit (Izin)
+     * Umar → Alpha
+     * ... dst
+   - Save → UPDATE attendances
+
+4. Laporan:
+   - Dashboard tampilkan:
+     * Total Pertemuan: 5 sesi
+     * Kehadiran Ali: 80% (4/5 hadir)
+     * Kehadiran Fatimah: 60% (3/5 hadir)
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  CASCADE BEHAVIOR (Apa yang Terjadi Saat Delete)                  ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+┌─ Hapus MENTOR (user)
+│  └─► CASCADE DELETE → GROUPS yang dipimpin
+│       └─► CASCADE DELETE → SESSIONS di grup tersebut
+│            └─► CASCADE DELETE → ATTENDANCES di sesi tersebut
+│       └─► SET NULL → STUDENTS.group_id (santri jadi tanpa grup)
+│
+├─ Hapus GRUP
+│  └─► CASCADE DELETE → SESSIONS di grup
+│       └─► CASCADE DELETE → ATTENDANCES di sesi tersebut
+│  └─► SET NULL → STUDENTS.group_id
+│
+├─ Hapus SANTRI
+│  └─► CASCADE DELETE → ATTENDANCES milik santri
+│
+└─ Hapus SESI
+   └─► CASCADE DELETE → ATTENDANCES di sesi tersebut
+
+╔═══════════════════════════════════════════════════════════════════╗
+║  FILE MIGRASI TERKAIT                                             ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+database/migrations/
+├── 2026_01_19_000001_create_groups_table.php
+├── 2026_01_19_000002_create_students_table.php
+├── 2026_01_19_000003_create_sessions_table.php
+├── 2026_01_19_000004_create_attendances_table.php
+└── 2026_01_19_000005_add_role_to_users_table.php
+
+Urutan migrasi PENTING! (Foreign key harus ke tabel yang sudah ada)
+
+└──────────────────────────────────────────────────────────────────┘

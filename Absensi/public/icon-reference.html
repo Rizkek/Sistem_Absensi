@@ -1,0 +1,128 @@
+<!-- 
+  CONTOH PENGGUNAAN MATERIAL SYMBOLS
+  File ini bisa dijadikan referensi untuk icon yang tersedia
+-->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Symbols - Icon Reference</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body { font-family: sans-serif; padding: 2rem; background: #f9fafb; }
+        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+        .icon-item { text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .material-symbols-outlined { font-size: 32px; display: block; margin-bottom: 0.5rem; color: #1e3a8a; }
+        .icon-name { font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <h1>Material Symbols - Icon yang Tersedia</h1>
+    <p>Gunakan class <code>material-symbols-outlined</code> dengan nama icon di dalam tag.</p>
+    
+    <h2>Icons untuk Sistem Absensi</h2>
+    <div class="icon-grid">
+        <!-- Navigation & Dashboard -->
+        <div class="icon-item">
+            <span class="material-symbols-outlined">dashboard</span>
+            <div class="icon-name">dashboard</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">groups</span>
+            <div class="icon-name">groups (Halaqah)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">person</span>
+            <div class="icon-name">person (User)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">school</span>
+            <div class="icon-name">school (Santri)</div>
+        </div>
+        
+        <!-- Attendance Related -->
+        <div class="icon-item">
+            <span class="material-symbols-outlined">check_circle</span>
+            <div class="icon-name">check_circle (Hadir)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">cancel</span>
+            <div class="icon-name">cancel (Tidak Hadir)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">schedule</span>
+            <div class="icon-name">schedule (Terlambat)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">event</span>
+            <div class="icon-name">event (Jadwal)</div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="icon-item">
+            <span class="material-symbols-outlined">add</span>
+            <div class="icon-name">add (Tambah)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">edit</span>
+            <div class="icon-name">edit (Edit)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">delete</span>
+            <div class="icon-name">delete (Hapus)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">save</span>
+            <div class="icon-name">save (Simpan)</div>
+        </div>
+        
+        <!-- Stats & Reports -->
+        <div class="icon-item">
+            <span class="material-symbols-outlined">bar_chart</span>
+            <div class="icon-name">bar_chart (Statistik)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">description</span>
+            <div class="icon-name">description (Laporan)</div>
+        </div>
+        
+        <!-- Settings -->
+        <div class="icon-item">
+            <span class="material-symbols-outlined">settings</span>
+            <div class="icon-name">settings (Pengaturan)</div>
+        </div>
+        
+        <div class="icon-item">
+            <span class="material-symbols-outlined">logout</span>
+            <div class="icon-name">logout (Keluar)</div>
+        </div>
+    </div>
+    
+    <h2 style="margin-top: 2rem;">Cara Penggunaan di Filament Resource</h2>
+    <pre style="background: white; padding: 1rem; border-radius: 8px; overflow-x: auto;">
+// Di StudentResource.php
+protected static ?string $navigationIcon = 'heroicon-o-users';
+
+// Ganti dengan Material Symbol (setelah Filament support custom icons):
+// Untuk sementara, icon di navigation masih pakai Heroicons
+// Tapi di custom view/blade, bisa pakai Material Symbols bebas
+
+// Contoh di Blade file:
+&lt;span class="material-symbols-outlined"&gt;school&lt;/span&gt;
+    </pre>
+    
+    <p><strong>Catatan:</strong> Filament default menggunakan Heroicons untuk navigation. Material Symbols bisa digunakan di custom blade views, widgets, dan komponen custom.</p>
+</body>
+</html>
