@@ -10,11 +10,7 @@ class CreateSession extends CreateRecord
 {
     protected static string $resource = SessionResource::class;
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['group_id'] = \App\Models\Group::where('mentor_id', Auth::id())->value('id');
-        return $data;
-    }
+
 
     protected function afterCreate(): void
     {

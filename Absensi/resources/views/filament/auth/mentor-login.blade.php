@@ -6,7 +6,7 @@
         {{-- Left Panel: Branding (Emerald Theme) --}}
         <div class="hidden lg:flex lg:w-1/2 bg-slate-900 relative overflow-hidden shrink-0">
             {{-- Background Gradient --}}
-            <div class="absolute inset-0 bg-linear-to-br from-slate-900 via-emerald-900 to-slate-900"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900"></div>
             <div class="absolute inset-0 opacity-10"
                 style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;">
             </div>
@@ -56,12 +56,14 @@
 
                 {{-- Form Content --}}
                 <div class="filament-form-content">
-                    {{ $this->form }}
+                    <form wire:submit="authenticate" class="space-y-8">
+                        {{ $this->form }}
 
-                    <div class="mt-6">
-                        <x-filament-panels::form.actions :actions="$this->getCachedFormActions()"
-                            :full-width="$this->hasFullWidthFormActions()" />
-                    </div>
+                        <div class="mt-6">
+                            <x-filament-panels::form.actions :actions="$this->getCachedFormActions()"
+                                :full-width="$this->hasFullWidthFormActions()" />
+                        </div>
+                    </form>
 
                     {{-- Validation Errors Check --}}
                     @if ($errors->any())

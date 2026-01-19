@@ -42,29 +42,42 @@ class ActivityChart extends ChartWidget
 
     protected function getData(): array
     {
+        // Query real data grouped by Topic
+        $mentorId = \Illuminate\Support\Facades\Auth::id();
+
+        $data = \App\Models\Session::whereHas('group', function ($q) use ($mentorId) {
+            $q->where('mentor_id', $mentorId);
+        })
+            ->withCount([
+                'attendances as present_count' => function ($q) {
+                    $q->where('status', 'present');
+                }
+            ])
+            ->get()
+            ->groupBy('topic')
+            ->map(function ($sessions) {
+                return $sessions->sum('present_count');
+            });
+
+        $labels = $data->keys()->toArray();
+        $counts = $data->values()->toArray();
+
         return [
             'datasets' => [
                 [
                     'label' => 'Aktivitas',
-                    'data' => [48, 42, 29, 53, 58, 38], // Dummy data sesuai gambar
+                    'data' => $counts,
                     'backgroundColor' => [
-                        '#60a5fa', // Biru (Shalat Berjamaah)
-                        '#4ade80', // Hijau (Shalat Dhuha)
-                        '#c084fc', // Ungu (Qiyamul Lail)
-                        '#fb923c', // Orange (Tilawah)
-                        '#f472b6', // Pink (Dzikir)
-                        '#818cf8', // Indigo (Olahraga)
+                        '#60a5fa',
+                        '#4ade80',
+                        '#c084fc',
+                        '#fb923c',
+                        '#f472b6',
+                        '#818cf8',
                     ],
                 ],
             ],
-            'labels' => [
-                'Shalat Berjamaah',
-                'Shalat Dhuha',
-                'Qiyamul Lail',
-                'Tilawah',
-                'Dzikir',
-                'Olahraga'
-            ],
+            'labels' => $labels,
         ];
     }
 
