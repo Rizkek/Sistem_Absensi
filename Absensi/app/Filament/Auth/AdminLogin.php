@@ -14,6 +14,12 @@ class AdminLogin extends BaseLogin
     // Menggunakan layout custom jika diperlukan, tapi kita inject styling lewat PanelProvider saja
     // untuk mempermudah maintenance tanpa override view full.
 
+    // Override mount to allow access to login page even when logged in (for development/testing)
+    public function mount(): void
+    {
+        // Do nothing - allow viewing login page for revisions
+    }
+
     public function getHeading(): string|Htmlable
     {
         return 'Portal BKAP';
@@ -22,6 +28,14 @@ class AdminLogin extends BaseLogin
     public function getSubheading(): string|Htmlable|null
     {
         return 'Silakan login untuk masuk ke panel administrasi akademik.';
+    }
+
+    /**
+     * Disable "Remember Me" checkbox
+     */
+    public function hasRememberMe(): bool
+    {
+        return false;
     }
 
     public function authenticate(): ?\Filament\Http\Responses\Auth\Contracts\LoginResponse
@@ -38,6 +52,9 @@ class AdminLogin extends BaseLogin
         }
 
         $user = \Illuminate\Support\Facades\Auth::user();
+
+        // Cache user untuk request berikutnya (1 jam)
+        \Illuminate\Support\Facades\Cache::put('user.' . $user->id, $user, 3600);
 
         if ($user->role !== 'admin') {
             \Illuminate\Support\Facades\Auth::logout();

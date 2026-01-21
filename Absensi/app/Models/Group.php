@@ -17,6 +17,9 @@ class Group extends Model
 
     protected $fillable = ['name', 'mentor_id'];
 
+    // Default eager loading untuk optimize queries
+    protected $with = ['mentor'];
+
     /** Relasi: Grup dimiliki oleh satu Mentor */
     public function mentor(): BelongsTo
     {

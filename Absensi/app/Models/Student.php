@@ -17,6 +17,9 @@ class Student extends Model
 
     protected $fillable = ['name', 'nis', 'group_id'];
 
+    // Default eager loading untuk optimize queries
+    protected $with = ['group'];
+
     /** Relasi: Santri tergabung dalam satu Grup */
     public function group(): BelongsTo
     {

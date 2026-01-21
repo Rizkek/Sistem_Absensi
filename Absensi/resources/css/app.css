@@ -10,3 +10,228 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@layer base {
+    /* Force Light Theme Everywhere */
+    * {
+        color-scheme: light;
+    }
+
+    /* Filament Light Theme - White Background */
+    [data-theme="light"],
+    [data-theme="dark"],
+    html,
+    body {
+        color-scheme: light;
+        --color-page-background: #ffffff;
+        --color-sidebar-background: #ffffff;
+        --color-container-background: #ffffff;
+        --color-content: #1f2937;
+        --color-text: #1f2937;
+        --color-gray-50: #f9fafb;
+        --color-gray-100: #f3f4f6;
+        --color-gray-200: #e5e7eb;
+        --color-gray-300: #d1d5db;
+        --color-gray-400: #9ca3af;
+        --color-gray-500: #6b7280;
+        --color-gray-600: #4b5563;
+        --color-gray-700: #374151;
+        --color-gray-800: #1f2937;
+        --color-gray-900: #111827;
+    }
+
+    /* Force all pages to light theme */
+    body {
+        @apply bg-white text-gray-900;
+    }
+
+    /* All text should be dark on light background */
+    p, span, div, li, a, label, h1, h2, h3, h4, h5, h6 {
+        @apply text-gray-900;
+    }
+
+    /* Sidebar always white */
+    aside, nav {
+        @apply bg-white text-gray-900;
+    }
+
+    /* Headers always light */
+    header {
+        @apply bg-white text-gray-900 border-b border-gray-200;
+    }
+}
+
+@layer components {
+    /* Ensure white background for all Filament panels */
+    .fi-panel {
+        @apply bg-white;
+    }
+
+    .fi-page {
+        @apply bg-gray-50;
+    }
+
+    .fi-sidebar {
+        @apply bg-white border-r border-gray-200;
+    }
+
+    /* Cards and sections */
+    .fi-card {
+        @apply bg-white border border-gray-200 rounded-lg shadow-sm;
+    }
+
+    .fi-section {
+        @apply bg-white border border-gray-200 rounded-lg;
+    }
+
+    /* Widgets */
+    .fi-widget {
+        @apply bg-white border border-gray-200 rounded-lg shadow-sm;
+    }
+
+    /* Stats Widget */
+    .fi-stats-widget {
+        @apply bg-white border border-gray-200 rounded-lg;
+    }
+
+    /* Dashboard Grid */
+    .fi-page-content {
+        @apply bg-gray-50;
+    }
+
+    /* Login Form Inputs - Beautiful Styling */
+    .fi-input,
+    .fi-textarea,
+    .fi-select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        @apply bg-white border-2 border-gray-200 rounded-xl px-4 py-3;
+        @apply text-gray-900 placeholder-gray-400;
+        @apply transition-all duration-200;
+        @apply focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none;
+        @apply hover:border-gray-300;
+    }
+
+    /* Admin Panel Inputs - Blue Theme */
+    .filament.admin input[type="text"],
+    .filament.admin input[type="email"],
+    .filament.admin input[type="password"],
+    .admin-panel .fi-input {
+        @apply focus:border-blue-500 focus:ring-blue-100;
+    }
+
+    .filament.admin input[type="text"]:focus,
+    .filament.admin input[type="email"]:focus,
+    .filament.admin input[type="password"]:focus {
+        @apply shadow-lg shadow-blue-100;
+    }
+
+    /* Mentor Panel Inputs - Emerald Theme */
+    .filament.mentor input[type="text"],
+    .filament.mentor input[type="email"],
+    .filament.mentor input[type="password"],
+    .mentor-panel .fi-input {
+        @apply focus:border-emerald-500 focus:ring-emerald-100;
+    }
+
+    .filament.mentor input[type="text"]:focus,
+    .filament.mentor input[type="email"]:focus,
+    .filament.mentor input[type="password"]:focus {
+        @apply shadow-lg shadow-emerald-100;
+    }
+
+    /* Input Label Styling */
+    label {
+        @apply text-gray-700 font-medium text-sm mb-2 block;
+    }
+
+    /* Button Styling */
+    button[type="submit"] {
+        @apply px-6 py-3 rounded-xl font-semibold text-white;
+        @apply transition-all duration-200;
+        @apply hover:shadow-lg hover:scale-105;
+        @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    }
+
+    /* Admin Submit Button */
+    .filament.admin button[type="submit"],
+    .admin-panel button[type="submit"] {
+        @apply bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
+    }
+
+    /* Mentor Submit Button */
+    .filament.mentor button[type="submit"],
+    .mentor-panel button[type="submit"] {
+        @apply bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500;
+    }
+
+    /* Form Group Spacing */
+    .fi-form-field-wrapper {
+        @apply mb-5;
+    }
+
+    .fi-form-field {
+        @apply mb-0;
+    }
+
+    /* Additional Light Theme Forcing */
+    .fi-topbar {
+        @apply bg-white border-b border-gray-200;
+    }
+
+    .fi-main {
+        @apply bg-gray-50;
+    }
+
+    .fi-simple-main {
+        @apply bg-white;
+    }
+
+    .fi-section-header {
+        @apply bg-white;
+    }
+
+    /* Table styling - light */
+    table, tbody, thead, tr, td, th {
+        @apply bg-white text-gray-900 border-gray-200;
+    }
+
+    /* Dropdown/Select light */
+    [role="listbox"],
+    [role="option"],
+    .fi-select-option {
+        @apply bg-white text-gray-900;
+    }
+
+    /* Modal light */
+    .fi-modal,
+    [role="dialog"] {
+        @apply bg-white text-gray-900;
+    }
+
+    /* Notification light */
+    .fi-notification {
+        @apply bg-white border border-gray-200;
+    }
+
+    /* Badge light */
+    .fi-badge {
+        @apply bg-gray-100 text-gray-900;
+    }
+
+    /* Breadcrumb light */
+    .fi-breadcrumbs {
+        @apply text-gray-600;
+    }
+
+    .fi-breadcrumb-item {
+        @apply text-gray-600;
+    }
+
+    .fi-breadcrumb-item.active {
+        @apply text-gray-900;
+    }
+}

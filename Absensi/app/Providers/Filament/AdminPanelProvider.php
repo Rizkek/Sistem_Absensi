@@ -6,11 +6,9 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -43,23 +41,31 @@ class AdminPanelProvider extends PanelProvider
             ->login(\App\Filament\Auth\AdminLogin::class)
             ->brandName('Portal BKAP')
             ->favicon(asset('favicon.ico'))
+            // === THEME: Light Mode dengan warna Blue ===
             ->colors([
                 'primary' => Color::Blue,
                 'gray' => Color::Slate,
+                'danger' => Color::Rose,
+                'info' => Color::Sky,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
             ])
-            ->renderHook(
-                'panels::head.start',
-                fn(): string => \Illuminate\Support\Facades\Blade::render('@vite(["resources/css/app.css", "resources/js/app.js"])')
-            )
+            // Sidebar styling - Light theme
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('280px')
+            // Maksimum konten width
+            ->maxContentWidth('full')
+            ->databaseNotifications(false)
+            ->viteTheme('resources/css/app.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // No additional pages - using discovered pages only
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            // Temporarily disable widget discovery to avoid infinite loop
+            // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets disabled temporarily for debugging
             ])
             ->middleware([
                 EncryptCookies::class,

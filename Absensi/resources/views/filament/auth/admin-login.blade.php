@@ -1,125 +1,263 @@
-<x-filament-panels::page.simple>
-    {{-- FIX: Gunakan Inline Style untuk memastikan tidak ada yang menutupi (Z-Index 99999) --}}
-    <div
-        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999; display: flex; width: 100%; height: 100vh; background-color: white; overflow-y: auto;">
+@php
+    $this->form->fill();
+@endphp
+
+<div>
+    {{-- Custom Login Layout dengan INLINE STYLES --}}
+    <div id="custom-login-wrapper"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999; display: flex; width: 100%; height: 100vh; background-color: #ffffff; overflow-y: auto;">
 
         {{-- Left Panel: Branding (Blue Theme) --}}
-        <div class="hidden lg:flex lg:w-1/2 bg-slate-900 relative overflow-hidden shrink-0">
-            {{-- Background Gradient --}}
-            <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>
-            <div class="absolute inset-0 opacity-10"
-                style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;">
+        <div class="login-branding-panel"
+            style="display: none; width: 50%; background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%); position: relative; overflow: hidden; flex-shrink: 0;">
+            {{-- Grid Pattern --}}
+            <div
+                style="position: absolute; inset: 0; opacity: 0.1; background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;">
             </div>
 
             {{-- Content --}}
-            <div class="relative z-10 flex flex-col justify-center px-16 text-white w-full h-full">
-                <div class="mb-12">
-                    <div class="w-12 h-1 bg-blue-500 rounded-full mb-6"></div>
-                    <h1 class="text-4xl font-semibold mb-3 tracking-tight text-white">Portal BKAP</h1>
-                    <p class="text-lg text-slate-400 font-light max-w-sm">
+            <div
+                style="position: relative; z-index: 10; display: flex; flex-direction: column; justify-content: center; padding: 3rem 4rem; color: white; width: 100%; height: 100%;">
+                <div style="margin-bottom: 3rem;">
+                    <div
+                        style="width: 3rem; height: 0.25rem; background-color: #3b82f6; border-radius: 9999px; margin-bottom: 1.5rem;">
+                    </div>
+                    <h1
+                        style="font-size: 2.25rem; font-weight: 600; margin-bottom: 0.75rem; letter-spacing: -0.025em; color: white;">
+                        Portal BKAP</h1>
+                    <p style="font-size: 1.125rem; color: #94a3b8; font-weight: 300; max-width: 24rem;">
                         Sistem Manajemen Absensi & Monitoring Akademik
                     </p>
                 </div>
 
-                <div class="space-y-4 max-w-sm">
-                    <div class="flex items-center gap-3 text-slate-300">
-                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                        <p class="text-sm">Kelola data dan laporan</p>
+                <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 24rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; color: #cbd5e1;">
+                        <div
+                            style="width: 0.375rem; height: 0.375rem; border-radius: 9999px; background-color: #60a5fa;">
+                        </div>
+                        <p style="font-size: 0.875rem; margin: 0;">Kelola data dan laporan</p>
                     </div>
-                    <div class="flex items-center gap-3 text-slate-300">
-                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                        <p class="text-sm">Monitor kehadiran</p>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; color: #cbd5e1;">
+                        <div
+                            style="width: 0.375rem; height: 0.375rem; border-radius: 9999px; background-color: #60a5fa;">
+                        </div>
+                        <p style="font-size: 0.875rem; margin: 0;">Monitor kehadiran realtime</p>
                     </div>
-                    <div class="flex items-center gap-3 text-slate-300">
-                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                        <p class="text-sm">Akses aman</p>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; color: #cbd5e1;">
+                        <div
+                            style="width: 0.375rem; height: 0.375rem; border-radius: 9999px; background-color: #60a5fa;">
+                        </div>
+                        <p style="font-size: 0.875rem; margin: 0;">Akses aman & terenkripsi</p>
                     </div>
                 </div>
             </div>
         </div>
 
         {{-- Right Panel: Login Form --}}
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white overflow-y-auto">
-            <div class="w-full max-w-md">
+        <div class="login-form-panel"
+            style="width: 100%; display: flex; align-items: center; justify-content: center; padding: 2rem; background-color: #ffffff; overflow-y: auto;">
+            <div style="width: 100%; max-width: 28rem;">
                 {{-- Mobile Brand --}}
-                <div class="lg:hidden mb-10 text-center">
-                    <h1 class="text-2xl font-bold text-slate-900">Portal BKAP</h1>
-                    <p class="text-sm text-slate-500 mt-1">Admin Access</p>
+                <div class="mobile-brand" style="display: block; margin-bottom: 2.5rem; text-align: center;">
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0;">Portal BKAP</h1>
+                    <p style="font-size: 0.875rem; color: #64748b; margin-top: 0.25rem;">Admin Access</p>
                 </div>
 
                 {{-- Form Header --}}
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-slate-900 mb-2">Sign In</h2>
-                    <p class="text-slate-500 text-sm">Masuk ke dashboard admin</p>
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin: 0 0 0.5rem 0;">Sign In</h2>
+                    <p style="color: #64748b; font-size: 0.875rem; margin: 0;">Masuk ke dashboard admin</p>
                 </div>
 
                 {{-- Form Content --}}
                 <div class="filament-form-content">
-                    <form wire:submit="authenticate" class="space-y-8">
+                    <form wire:submit="authenticate" style="display: flex; flex-direction: column; gap: 1.5rem;">
                         {{ $this->form }}
 
-                        <div class="mt-6">
-                            <x-filament-panels::form.actions :actions="$this->getCachedFormActions()"
-                                :full-width="$this->hasFullWidthFormActions()" />
+                        <div style="margin-top: 1rem;">
+                            <x-filament::button type="submit" style="width: 100%;">
+                                Sign in
+                            </x-filament::button>
                         </div>
                     </form>
-
-                    {{-- Validation Errors Check --}}
-                    @if ($errors->any())
-                        <div
-                            class="mt-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 animate-pulse">
-                            <svg class="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <div>
-                                <h3 class="text-sm font-bold text-red-800">Login Gagal</h3>
-                                <ul class="mt-1 text-sm text-red-600 list-disc list-inside">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    @endif
                 </div>
-
-                <p class="mt-8 text-center text-xs text-slate-400">
+                <p style="margin-top: 2rem; text-align: center; font-size: 0.75rem; color: #94a3b8;">
                     © 2026 BKAP Portal
                 </p>
             </div>
         </div>
     </div>
 
-    {{-- Strict CSS Reset untuk elemen bawaan Filament yang mungkin bocor --}}
+    {{-- Loading Overlay --}}
+    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 100000; display: flex; align-items: center; justify-content: center;">
+        <div style="background-color: white; border-radius: 1rem; padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: center; min-width: 18rem;">
+            <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                <div class="spinner" style="width: 3rem; height: 3rem; border: 4px solid #e5e7eb; border-top-color: #1e40af; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            </div>
+            <p style="color: #1e293b; font-weight: 600; font-size: 1rem; margin: 0;">Loading...</p>
+            <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem; margin-bottom: 0;">Mohon tunggu, kami sedang memproses login Anda</p>
+        </div>
+    </div>
+
+    {{-- CSS Styling --}}
     <style>
-        .fi-simple-page,
-        .fi-simple-main,
-        .fi-simple-layout {
-            height: 100vh !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            max-width: none !important;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        /* Sembunyikan elemen header default Filament jika masih muncul */
-        .fi-simple-header {
+        /* Responsive: Show branding panel on large screens */
+        @media (min-width: 1024px) {
+            .login-branding-panel {
+                display: flex !important;
+            }
+
+            .login-form-panel {
+                width: 50% !important;
+            }
+
+            .mobile-brand {
+                display: none !important;
+            }
+        }
+
+        /* ===== INPUT FIELD STYLING ===== */
+        .filament-form-content input,
+        .fi-input input,
+        .fi-fo-text-input input,
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            background-color: #f8fafc !important;
+            border: 2px solid #e2e8f0 !important;
+            border-radius: 0.5rem !important;
+            padding: 0.875rem 1rem !important;
+            font-size: 1rem !important;
+            color: #1e293b !important;
+            transition: all 0.2s ease !important;
+            width: 100% !important;
+        }
+
+        .filament-form-content input:hover,
+        .fi-input input:hover,
+        input:hover {
+            border-color: #cbd5e1 !important;
+            background-color: #ffffff !important;
+        }
+
+        .filament-form-content input:focus,
+        .fi-input input:focus,
+        input:focus {
+            border-color: #3b82f6 !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+            outline: none !important;
+            color: #0f172a !important;
+        }
+
+        /* Placeholder */
+        input::placeholder {
+            color: #94a3b8 !important;
+            opacity: 1 !important;
+        }
+
+        /* ===== LABEL STYLING ===== */
+        .fi-fo-field-wrp label,
+        .fi-input-wrp label,
+        label {
+            color: #334155 !important;
+            font-weight: 600 !important;
+            font-size: 0.875rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+        }
+
+        .fi-fo-field-wrp label span,
+        label span {
+            color: #334155 !important;
+        }
+
+        .fi-fo-field-wrp-label sup,
+        label sup {
+            color: #ef4444 !important;
+        }
+
+        /* ===== SUBMIT BUTTON ===== */
+        .filament-form-content button[type="submit"],
+        .fi-btn,
+        button[type="submit"] {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%) !important;
+            border-radius: 0.5rem !important;
+            padding: 0.875rem 1.5rem !important;
+            font-weight: 600 !important;
+            font-size: 1rem !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3) !important;
+            transition: all 0.3s ease !important;
+            width: 100% !important;
+            cursor: pointer !important;
+        }
+
+        .filament-form-content button[type="submit"]:hover,
+        .fi-btn:hover,
+        button[type="submit"]:hover {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+            box-shadow: 0 6px 16px rgba(30, 58, 138, 0.4) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        /* Icon dalam input */
+        .fi-input-wrp svg,
+        .fi-fo-text-input svg {
+            color: #64748b !important;
+        }
+
+        /* Error message */
+        .fi-fo-field-wrp-error-message {
+            color: #dc2626 !important;
+            font-size: 0.875rem !important;
+        }
+
+        /* Form field wrapper spacing */
+        .fi-fo-field-wrp {
+            margin-bottom: 1.25rem !important;
+        }
+
+        /* Hide Remember Me checkbox */
+        .filament-form-content [type="checkbox"],
+        .fi-fo-checkbox-wrp,
+        input[type="checkbox"],
+        label:has([type="checkbox"]) {
             display: none !important;
         }
-
-        /* Styling Input agar lebih rapi */
-        input[type="email"],
-        input[type="password"] {
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-            border-radius: 0.5rem;
-        }
-
-        button[type="submit"] {
-            border-radius: 0.5rem;
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-        }
     </style>
-</x-filament-panels::page.simple>
+
+    {{-- JavaScript for Loading Overlay --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[wire\\:submit]');
+            const loadingOverlay = document.getElementById('loading-overlay');
+
+            if (form && loadingOverlay) {
+                form.addEventListener('submit', function() {
+                    // Show loading overlay
+                    loadingOverlay.style.display = 'flex';
+                });
+
+                // Listen for Livewire events to hide loading on error
+                if (window.Livewire) {
+                    Livewire.hook('commit.response', ({respond, skip}) => {
+                        // Hide loading overlay after response
+                        if (loadingOverlay) {
+                            setTimeout(() => {
+                                loadingOverlay.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</div>

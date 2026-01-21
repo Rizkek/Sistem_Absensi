@@ -11,19 +11,10 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request): RedirectResponse|Redirector
     {
-        // Mendapatkan panel yang sedang aktif (admin atau mentor)
-        $panelId = Filament::getCurrentPanel()->getId();
+        // Redirect ke URL default panel (Dashboard)
+        // Ini memastikan Admin -> /admin/dashboard
+        // Dan Mentor -> /mentor/dashboard
 
-        // Redirect sesuai panel system
-        if ($panelId === 'admin') {
-            return redirect()->to('/admin');
-        }
-
-        if ($panelId === 'mentor') {
-            return redirect()->to('/mentor');
-        }
-
-        // Default fallback ke dashboard panel tersebut
         return redirect()->to(Filament::getCurrentPanel()->getUrl());
     }
 }

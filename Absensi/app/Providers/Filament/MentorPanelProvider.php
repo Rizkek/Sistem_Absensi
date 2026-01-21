@@ -42,14 +42,22 @@ class MentorPanelProvider extends PanelProvider
             ->login(\App\Filament\Auth\MentorLogin::class)
             ->brandName('Portal Pembimbing')
             ->favicon(asset('favicon.ico'))
+            // === THEME: Light Mode dengan warna Emerald ===
             ->colors([
                 'primary' => Color::Emerald,
                 'gray' => Color::Slate,
+                'danger' => Color::Rose,
+                'info' => Color::Sky,
+                'success' => Color::Green,
+                'warning' => Color::Amber,
             ])
-            ->renderHook(
-                'panels::head.start',
-                fn(): string => \Illuminate\Support\Facades\Blade::render('@vite(["resources/css/app.css", "resources/js/app.js"])')
-            )
+            // Sidebar styling - Light theme
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('280px')
+            // Maksimum konten width
+            ->maxContentWidth('full')
+            ->databaseNotifications(false)
+            ->viteTheme('resources/css/app.css')
             ->discoverResources(in: app_path('Filament/Mentor/Resources'), for: 'App\\Filament\\Mentor\\Resources')
             ->discoverPages(in: app_path('Filament/Mentor/Pages'), for: 'App\\Filament\\Mentor\\Pages')
             ->pages([
